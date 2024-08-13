@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Button,
   useColorScheme,
+  ActivityIndicator
 } from "react-native";
 
 import * as Animatable from "react-native-animatable";

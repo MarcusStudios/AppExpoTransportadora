@@ -1,24 +1,10 @@
-import React from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  TouchableOpacity,
-  StyleSheet,
-  useColorScheme,
-} from "react-native";
-
-
-
-export default function Empregado() {
-  
-  return(
+import React from "react"
+import { View, Text } from "react-native"
+export default function Empregado
+() {
+  return (
     <View>
-      <Text>
-        Ainda em desenvolvimento
-      </Text>
+      <Text>Encomendas</Text>
     </View>
-  );
+  ) 
 }
-
