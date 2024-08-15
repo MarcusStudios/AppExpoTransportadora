@@ -66,12 +66,12 @@ export default function Signin() {
           secureTextEntry={hidePass}
         />
         <TouchableOpacity style={styles.eyeIcon} onPress={() => setHidePass(!hidePass)}>
-          <Ionicons name="eye" size={24} color="black" />
+          <Ionicons name="eye-outline" size={24} color="black" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={userlogin}>
           {isLoading ? (
-            <ActivityIndicator size="small" color="white" />
+            <ActivityIndicator size="small"  color="white" />
           ) : (
             <Text style={styles.buttonText}>Acessar</Text>
           )}
