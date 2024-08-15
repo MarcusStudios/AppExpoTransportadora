@@ -1,6 +1,5 @@
 {
   "expo": {
-  
     "name": "cargas",
     "slug": "cargas",
     "version": "1.0.0",
@@ -22,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.marcushfbbdbrbb.cargas"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ead7553f-b393-4cb1-ba9a-f42db4cef514"
+      }
     }
   }
 }
