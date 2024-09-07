@@ -9,6 +9,7 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import {app} from "../../services/firebaseConfig.js";
 import {Ionicons} from "@expo/vector-icons";
+import { AlertDialog, Button, XStack, YStack } from 'tamagui'
 
 export default function Signin() {
   const [userMail, setUserMail] = useState("");
