@@ -52,7 +52,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
     setIsLoadingRegister(true);
     // Simulação de uma chamada de rede
     try {
-      await new Promise((resolve) => setTimeout(resolve, 700)); // Simula um atraso de 2 segundos
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Simula um atraso de 2 segundos
       navigation.navigate("Cadastro");
     } catch (error) {
       alert("Ocorreu um erro durante o cadastro.");
@@ -65,7 +65,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
     setIsLoadingForgotPassword(true);
     // Simulação de uma chamada de rede
     try {
-      await new Promise((resolve) => setTimeout(resolve, 700)); // Simula um atraso de 2 segundos
+      await new Promise((resolve) => setTimeout(resolve, 600)); // Simula um atraso de 2 segundos
       navigation.navigate("Senha");
     } catch (error) {
       alert("Ocorreu um erro ao tentar recuperar a senha.");
