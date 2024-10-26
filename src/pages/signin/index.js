@@ -34,7 +34,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
     setIsLoadingLogin(true); // Ativa o indicador de atividade para login
     signInWithEmailAndPassword(auth, userMail, userPass)
       .then((userCredential) => {
-        const user = userCredential.user;
+        const user = unserCredential.user;
         alert("Login efetuado com sucesso!");
         console.log(user);
         navigation.navigate("Home");
