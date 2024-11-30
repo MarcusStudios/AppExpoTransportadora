@@ -1,30 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
-import { db, storage } from "../../services/firebaseConfig"; // Certifique-se de importar o storage
-import {
-  collection,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot,
-  doc,
-} from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Adicione imports necessários para o Storage
+import { db, storage } from "../../services/firebaseConfig";
+import { collection, addDoc, updateDoc, deleteDoc, onSnapshot, doc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useFonts } from "expo-font"; // Importando useFonts para carregar a fonte
 
 export default function Empregado() {
   const [nome, setNome] = useState("");
   const [idade, setIdade] = useState("");
   const [veiculo, setVeiculo] = useState("Caminhão Grande");
   const [status, setStatus] = useState("disponível");
-  const [foto, setFoto] = useState(null); // Inicializa foto com null, não undefined
+  const [foto, setFoto] = useState(null);
   const [empregados, setEmpregados] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const empregadosRef = collection(db, "empregados");
 
-  // Carregar empregados do Firestore
+  // Carregando a fonte personalizada
+  const [fontsLoaded] = useFonts({
+    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+  });
+
+  // Esperar a fonte carregar antes de renderizar
+  if (!fontsLoaded) {
+    return <Text>Carregando fontes...</Text>;
+  }
+
   useEffect(() => {
     const unsubscribe = onSnapshot(empregadosRef, (snapshot) => {
       const empregadosData = snapshot.docs.map((doc) => ({
@@ -33,39 +37,33 @@ export default function Empregado() {
       }));
       setEmpregados(empregadosData);
     });
-
     return () => unsubscribe();
   }, []);
 
-  // Função para fazer o upload da imagem para o Firebase Storage
   const uploadImageToFirebase = async (uri) => {
     const response = await fetch(uri);
     const blob = await response.blob();
-    const fileName = uri.split('/').pop(); // Extrai o nome do arquivo da URI
+    const fileName = uri.split("/").pop();
     const storageRef = ref(storage, `empregadosFotos/${fileName}`);
-    await uploadBytes(storageRef, blob); // Faz o upload da imagem para o Firebase Storage
-    const downloadURL = await getDownloadURL(storageRef); // Recupera a URL da imagem no Firebase Storage
-    return downloadURL; // Retorna a URL da imagem
+    await uploadBytes(storageRef, blob);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
   };
 
   const handleSave = async () => {
     try {
       let fotoUrl = null;
       if (foto) {
-        // Faz o upload da imagem para o Firebase Storage se houver uma foto
         fotoUrl = await uploadImageToFirebase(foto);
       }
 
-      // Verifica se o campo "foto" é null ou undefined e remove da estrutura de dados
       const novoEmpregado = {
         nome,
         idade,
         veiculo,
         status,
-        ...(fotoUrl && { foto: fotoUrl }), // Só adiciona a foto se ela não for null
+        ...(fotoUrl && { foto: fotoUrl }),
       };
-
-      console.log("Salvando novo empregado:", novoEmpregado); // Verifique os dados aqui.
 
       if (selectedId) {
         const docRef = doc(db, "empregados", selectedId);
@@ -75,15 +73,14 @@ export default function Empregado() {
         await addDoc(empregadosRef, novoEmpregado);
       }
 
-      // Limpa os campos
       setNome("");
       setIdade("");
       setVeiculo("Caminhão Grande");
       setStatus("disponível");
       setFoto(null);
+      setModalVisible(false);
     } catch (error) {
-      console.error("Erro ao salvar empregado:", error);
-      alert("Houve um erro ao salvar o empregado. Tente novamente.");
+      Alert.alert("Erro", "Houve um erro ao salvar o empregado. Tente novamente.");
     }
   };
 
@@ -99,6 +96,7 @@ export default function Empregado() {
     setStatus(empregado.status);
     setFoto(empregado.foto);
     setSelectedId(empregado.id);
+    setModalVisible(true);
   };
 
   const handlePickImage = async () => {
@@ -110,7 +108,7 @@ export default function Empregado() {
     });
 
     if (!result.canceled) {
-      setFoto(result.uri); // Verifique se o uri está sendo passado corretamente
+      setFoto(result.uri);
     }
   };
 
@@ -129,52 +127,15 @@ export default function Empregado() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cadastro de Empregado</Text>
-      <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
-        {foto ? (
-          <Image source={{ uri: foto }} style={styles.imagePreview} />
-        ) : (
-          <Text style={styles.imagePlaceholder}>Selecionar Foto</Text>
-        )}
-      </TouchableOpacity>
-      <TextInput
-        placeholder="Nome"
-        value={nome}
-        onChangeText={setNome}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Idade"
-        value={idade}
-        onChangeText={setIdade}
-        keyboardType="numeric"
-        style={styles.input}
-      />
-      <Text style={styles.label}>Veículo:</Text>
-      <Picker
-        selectedValue={veiculo}
-        onValueChange={(itemValue) => setVeiculo(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Caminhão Grande" value="Caminhão Grande" />
-        <Picker.Item label="Caminhão Médio" value="Caminhão Médio" />
-        <Picker.Item label="Caminhão Pequeno" value="Caminhão Pequeno" />
-      </Picker>
-      <Text style={styles.label}>Status:</Text>
-      <Picker
-        selectedValue={status}
-        onValueChange={(itemValue) => setStatus(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="Disponível" value="disponível" />
-        <Picker.Item label="Ocupado" value="ocupado" />
-        <Picker.Item label="De folga" value="de folga" />
-      </Picker>
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>
-          {selectedId ? "Atualizar Empregado" : "Adicionar Empregado"}
-        </Text>
-      </TouchableOpacity>
+      <View style={styles.header}>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Empregados</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={[styles.addButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>+ Cadastrar Empregado</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={empregados}
         keyExtractor={(item) => item.id}
@@ -184,12 +145,12 @@ export default function Empregado() {
               <Image source={{ uri: item.foto }} style={styles.empregadoImage} />
             )}
             <View style={styles.empregadoInfo}>
-              <Text style={styles.empregadoText}>
+              <Text  style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>
                 {item.nome} - {item.idade} anos
               </Text>
-              <Text style={styles.empregadoText}>Veículo: {item.veiculo}</Text>
+              <Text style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo: {item.veiculo}</Text>
               <Text
-                style={[styles.empregadoText, { color: getStatusColor(item.status) }]}
+                style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }, { color: getStatusColor(item.status) }]}
               >
                 Status: {item.status}
               </Text>
@@ -199,85 +160,114 @@ export default function Empregado() {
                 style={[styles.actionButton, { backgroundColor: "#007bff" }]}
                 onPress={() => handleEdit(item)}
               >
-                <Text style={styles.actionButtonText}>Editar</Text>
+                <Text style={[styles.actionButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionButton, { backgroundColor: "#dc3545" }]}
                 onPress={() => handleDelete(item.id)}
               >
-                <Text style={styles.actionButtonText}>Excluir</Text>
+                <Text style={[styles.actionButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Excluir</Text>
               </TouchableOpacity>
             </View>
           </View>
         )}
       />
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
+              {foto ? (
+                <Image source={{ uri: foto }} style={styles.imagePreview} />
+              ) : (
+                <Text style={[styles.imagePlaceholder, { fontFamily: "JetBrainsMono-Bold" }]}>Selecionar Foto</Text>
+              )}
+            </TouchableOpacity>
+            <TextInput
+              placeholder="Nome"
+              value={nome}
+              onChangeText={setNome}
+              style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
+            />
+            <TextInput
+              placeholder="Idade"
+              value={idade}
+              onChangeText={setIdade}
+              keyboardType="numeric"
+              style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
+            />
+            <Text  style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo:</Text>
+            <Picker
+              selectedValue={veiculo}
+              onValueChange={(itemValue) => setVeiculo(itemValue)}
+              style={[styles.picker, { fontFamily: "JetBrainsMono-Bold" }]}
+            >
+              <Picker.Item label="Caminhão Grande" value="Caminhão Grande" />
+              <Picker.Item label="Caminhão Médio" value="Caminhão Médio" />
+              <Picker.Item label="Caminhão Pequeno" value="Caminhão Pequeno" />
+            </Picker>
+            <Text  style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Status:</Text>
+            <Picker
+              selectedValue={status}
+              onValueChange={(itemValue) => setStatus(itemValue)}
+              style={[styles.picker, { fontFamily: "JetBrainsMono-Bold" }]}
+            >
+              <Picker.Item label="Disponível" value="disponível" />
+              <Picker.Item label="Ocupado" value="ocupado" />
+              <Picker.Item label="De folga" value="de folga" />
+            </Picker>
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text  style={[styles.saveButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>
+                {selectedId ? "Atualizar Empregado" : "Salvar Empregado"}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => setModalVisible(false)}
+              style={styles.cancelButton}
+            >
+              <Text  style={[styles.cancelButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cancelar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20,
+    backgroundColor: "#343a40",
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#343a40',
-  },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingLeft: 15,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-    fontSize: 16,
-  },
-  picker: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    marginBottom: 20,
-    backgroundColor: '#fff',
-  },
-  imagePicker: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8f9fa",
-  },
-  imagePreview: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-  },
-  imagePlaceholder: {
-    color: "#6c757d",
-    fontSize: 16,
-  },
-  saveButton: {
-    backgroundColor: "#28a745",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  saveButtonText: {
     color: "#fff",
-    fontSize: 18,
+  },
+  addButton: {
+    backgroundColor: "#28a745",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginLeft: 5,
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   empregadoContainer: {
     flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
+    padding: 15,
+    backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
@@ -285,7 +275,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    marginRight: 10,
+    marginRight: 15,
   },
   empregadoInfo: {
     flex: 1,
@@ -296,14 +286,80 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
+    alignItems: "center",
   },
   actionButton: {
-    padding: 10,
-    marginLeft: 10,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
     borderRadius: 5,
-    alignItems: "center",
+    margin: 5,
+    top: 45,
   },
   actionButtonText: {
     color: "#fff",
+    fontSize: 14,
+    
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    padding: 20,
+    width: "80%",
+    borderRadius: 10,
+  },
+  imagePicker: {
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  imagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 10,
+  },
+  imagePlaceholder: {
+    fontSize: 16,
+    color: "#007bff",
+  },
+  input: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    padding: 10,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  picker: {
+    marginBottom: 15,
+  },
+  saveButton: {
+    backgroundColor: "black",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  cancelButton: {
+    backgroundColor: "black",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+  },
+  cancelButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
