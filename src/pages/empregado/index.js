@@ -35,42 +35,50 @@ export default function Empregado() {
         id: doc.id,
         ...doc.data(),
       }));
+      console.log("Empregados carregados:", empregadosData); // Adicione este log
       setEmpregados(empregadosData);
     });
     return () => unsubscribe();
   }, []);
+  
 
   const uploadImageToFirebase = async (uri) => {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const fileName = uri.split("/").pop();
-    const storageRef = ref(storage, `empregadosFotos/${fileName}`);
-    await uploadBytes(storageRef, blob);
-    const downloadURL = await getDownloadURL(storageRef);
-    return downloadURL;
-  };
-
-  const handleSave = async () => {
     try {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const fileName = uri.split("/").pop();
+        const storageRef = ref(storage, `empregadosFotos/${fileName}`);
+        await uploadBytes(storageRef, blob);
+        const downloadURL = await getDownloadURL(storageRef);
+        console.log("URL da Imagem:", downloadURL); // Adicione este log
+        return downloadURL;
+    } catch (error) {
+        console.error("Erro no upload da imagem:", error);
+        throw error;
+    }
+};
+
+
+const handleSave = async () => {
+  try {
       let fotoUrl = null;
       if (foto) {
-        fotoUrl = await uploadImageToFirebase(foto);
+          fotoUrl = await uploadImageToFirebase(foto);
       }
 
       const novoEmpregado = {
-        nome,
-        idade,
-        veiculo,
-        status,
-        ...(fotoUrl && { foto: fotoUrl }),
+          nome,
+          idade,
+          veiculo,
+          status,
+          ...(fotoUrl && { foto: fotoUrl }), // Certifique-se de que o campo "foto" está sendo adicionado
       };
 
       if (selectedId) {
-        const docRef = doc(db, "empregados", selectedId);
-        await updateDoc(docRef, novoEmpregado);
-        setSelectedId(null);
+          const docRef = doc(db, "empregados", selectedId);
+          await updateDoc(docRef, novoEmpregado);
       } else {
-        await addDoc(empregadosRef, novoEmpregado);
+          await addDoc(empregadosRef, novoEmpregado);
       }
 
       setNome("");
@@ -79,10 +87,10 @@ export default function Empregado() {
       setStatus("disponível");
       setFoto(null);
       setModalVisible(false);
-    } catch (error) {
+  } catch (error) {
       Alert.alert("Erro", "Houve um erro ao salvar o empregado. Tente novamente.");
-    }
-  };
+  }
+};
 
   const handleDelete = async (id) => {
     const docRef = doc(db, "empregados", id);
@@ -140,9 +148,10 @@ export default function Empregado() {
         data={empregados}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
+          
           <View style={styles.empregadoContainer}>
             {item.foto && (
-              <Image source={{ uri: item.foto }} style={styles.empregadoImage} />
+             <Image source={{ uri: item.foto }} style={styles.empregadoImage} />
             )}
             <View style={styles.empregadoInfo}>
               <Text  style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>
@@ -272,11 +281,11 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ddd",
   },
   empregadoImage: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    marginRight: 15,
-  },
+    width: 100,
+    height: 100,
+    borderRadius: 50, // Para exibir uma imagem circular
+    resizeMode: "cover",
+  },  
   empregadoInfo: {
     flex: 1,
   },
