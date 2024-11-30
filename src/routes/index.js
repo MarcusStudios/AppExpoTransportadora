@@ -40,38 +40,46 @@ export default function Routes() {
         component={Senha}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      <Stack.Screen 
         name="Home"
         options={{ headerShown: false }}
       >
         {() => (
           <Tab.Navigator
-            screenOptions={{
-              headerShown: false,
-              tabBarShowLabel: true,
-              tabBarStyle: {
-                position: "absolute",
-                backgroundColor: "#38a69d",
-                borderTopWidth: 0,
-                elevation: 0,
-                height: 90,
-                borderTopColor: "transparent",
-                borderRadius: 15,
-                margin: 20,
-                right: 0,
-                left: 0,
-              },
-              tabBarActiveTintColor: "#fff",
-              tabBarInactiveTintColor: "black",
-              tabBarLabelStyle: {
-                fontSize: 10,
-                textTransform: "uppercase",
-                fontWeight: "bold",
-                letterSpacing: 0.5,
-                marginBottom: 5,
-              },
-            }}
-          >
+          screenOptions={{
+            headerShown: false,
+            tabBarShowLabel: true,
+            tabBarStyle: {
+              position: "absolute",
+              backgroundColor: "black",
+              borderTopWidth: 0,
+              elevation: 0,
+              height: 90,
+              borderTopColor: "transparent",
+              borderRadius: 15,
+              margin: 10,
+              right: 0,
+              left: 0,
+              paddingTop: 12,
+            },
+            tabBarActiveTintColor: "#fff",
+            tabBarInactiveTintColor: "white",
+            tabBarLabelStyle: {
+              fontSize: 10,
+              textTransform: "uppercase",
+              fontWeight: "bold",
+              letterSpacing: 0.5,
+              marginBottom: 2,
+              marginTop: 2,
+              
+            },
+            tabBarHideOnKeyboard: true,
+
+
+             // Garante que o teclado não oculte a Tab Bar
+          }}
+        >
+        
             <Tab.Screen
               name="Encomendas"
               component={Home}

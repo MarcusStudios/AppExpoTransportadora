@@ -62,8 +62,8 @@ const Usuario = () => {
 
   const handleLogout = () => {
     Alert.alert(
-      'Confirm Logout',
-      'Are you sure you want to log out?',
+      'Logout',
+      'Tem certeza de que deseja sair?',
       [
         {
           text: 'Cancel',

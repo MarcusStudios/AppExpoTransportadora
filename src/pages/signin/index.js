@@ -33,19 +33,20 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
   const userlogin = () => {
     setIsLoadingLogin(true); // Ativa o indicador de atividade para login
     signInWithEmailAndPassword(auth, userMail, userPass)
-      .then((userCredential) => {
-        const user = unserCredential.user;
-        alert("Login efetuado com sucesso!");
-        console.log(user);
-        navigation.navigate("Home");
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        alert(errorMessage);
-      })
-      .finally(() => {
-        setIsLoadingLogin(false); // Desativa o indicador de atividade após o término do login
-      });
+  .then((userCredential) => {
+    const user = userCredential.user; // Corrigido aqui
+    alert("Login efetuado com sucesso!");
+    console.log(user);
+    navigation.navigate("Home");
+  })
+  .catch((error) => {
+    const errorMessage = error.message;
+    alert(errorMessage);
+  })
+  .finally(() => {
+    setIsLoadingLogin(false); // Desativa o indicador de atividade após o término do login
+  });
+
   };
 
   const handleRegister = async () => {
