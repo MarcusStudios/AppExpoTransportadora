@@ -4,6 +4,8 @@ import { Picker } from "@react-native-picker/picker";
 import { db } from "../../services/firebaseConfig";
 import { collection, addDoc, updateDoc, deleteDoc, onSnapshot, doc } from "firebase/firestore";
 import * as ImagePicker from "expo-image-picker";
+import { useFonts } from "expo-font";
+
 
 export default function Empregado() {
   const [nome, setNome] = useState("");
@@ -16,6 +18,17 @@ export default function Empregado() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const empregadosRef = collection(db, "empregados");
+
+   // Carregando a fonte personalizada
+   const [fontsLoaded] = useFonts({
+    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+  });
+
+  // Esperar a fonte carregar antes de renderizar
+  if (!fontsLoaded) {
+    return <Text>Carregando fontes...</Text>;
+  }
+
 
   useEffect(() => {
     const unsubscribe = onSnapshot(empregadosRef, (snapshot) => {
@@ -96,9 +109,9 @@ export default function Empregado() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Empregados</Text>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Empregados</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.addButtonText}>+ Cadastrar</Text>
+        <Text style={[styles.addButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>+ Cadastrar Empregado</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -108,18 +121,18 @@ export default function Empregado() {
           <View style={styles.empregadoContainer}>
             {item.imageUri && <Image source={{ uri: item.imageUri }} style={styles.empregadoImage} />}
             <View style={styles.empregadoInfo}>
-              <Text style={styles.empregadoText}>{item.nome} - {item.idade} anos</Text>
-              <Text style={styles.empregadoText}>Veículo: {item.veiculo}</Text>
-              <Text style={[styles.empregadoText, { color: item.status === "disponível" ? "green" : "red" }]}>
+              <Text style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>{item.nome} - {item.idade} anos</Text>
+              <Text style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo: {item.veiculo}</Text>
+              <Text style={[styles.empregadoText, { color: item.status === "disponível" ? "green" : "red" }, { fontFamily: "JetBrainsMono-Bold" }]}>
                 Status: {item.status}
               </Text>
             </View>
             <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
-                <Text style={styles.actionButtonText}>Editar</Text>
+                <Text style={[styles.editButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.actionButton} onPress={() => handleDelete(item.id)}>
-                <Text style={styles.actionButtonText}>Excluir</Text>
+                <Text style={[styles.actionButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Excluir</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -127,22 +140,22 @@ export default function Empregado() {
       />
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, { fontFamily: "JetBrainsMono-Bold" }]}>
             <TextInput
               placeholder="Nome"
               value={nome}
               onChangeText={setNome}
-              style={styles.input}
+              style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
             />
             <TextInput
               placeholder="Idade"
               value={idade}
               onChangeText={setIdade}
               keyboardType="numeric"
-              style={styles.input}
+              style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
             />
             <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
-              <Text>Selecionar Imagem</Text>
+              <Text style={[styles.imagePickerButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Selecionar Imagem</Text>
             </TouchableOpacity>
             {imageUri && <Image source={{ uri: imageUri }} style={styles.previewImage} />}
             <Picker selectedValue={veiculo} onValueChange={setVeiculo}>
@@ -156,10 +169,10 @@ export default function Empregado() {
               <Picker.Item label="De folga" value="de folga" />
             </Picker>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Salvar</Text>
+              <Text style={[styles.saveButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Salvar</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={resetForm} style={styles.cancelButton}>
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
+              <Text style={[styles.cancelButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -178,6 +191,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 20,
     backgroundColor: "#343a40",
+    alignItems: "center",
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
@@ -195,12 +210,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   empregadoContainer: {
-    flexDirection: "row",
-    padding: 15,
+    flexDirection: "row-reverse", // Move a imagem para o lado direito
+    alignItems: "left",        // Alinha os itens verticalmente
+    justifyContent: "space-between", // Espaçamento entre imagem e informações
+    padding: 10,
     backgroundColor: "#fff",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
+    marginLeft: 5,
+    marginRight: 5,
+    marginTop: 0,
+    marginBottom: 15,
   },
+  
   empregadoImage: {
     width: 100,
     height: 100,
@@ -209,33 +231,43 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
   },  
   empregadoInfo: {
-    flex: 1,
+    position: "absolute",
   },
   empregadoText: {
     fontSize: 16,
     marginBottom: 5,
+    right: 150,
+    top: 15, marginLeft: 5,
+    
   },
   buttonContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "row", // Alinha os itens em uma linha
+    justifyContent: "space-between", // Espaçamento entre os botões
+    alignItems: "center", // Centraliza os itens verticalmente
+    marginTop: 10, // Margem superior para dar espaço
   },
+  
   actionButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    margin: 5,
-    top: 45,
-    backgroundColor: "red",
+    marginHorizontal: 5, // Espaço entre os botões
+    marginTop: 140, // Move o botão para baixo
+    backgroundColor: "black",
   },
   editButton: {
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    margin: 5,
-    top: 10,
-    left: 68,
-    backgroundColor: "blue",
+    marginHorizontal: 5, // Espaço entre os botões
+    marginTop: 140, // Move o botão para baixo
+    backgroundColor: "black",
   },
+  editButtonText: {
+    color: "#fff",
+    fontSize: 14,
+  },
+  
   actionButtonText: {
     color: "#fff",
     fontSize: 14,

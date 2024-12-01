@@ -17,10 +17,21 @@ import { createUserWithEmailAndPassword, signInWithEmailAndPassword, } from "fir
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 import { app } from "../../services/firebaseConfig.js";
+import { useFonts } from 'expo-font';
+
 
 export default function Cadastro() {
   const [userMail, setUserMail] = useState("");
   const [userPass, setUserPass] = useState("");
+
+  const [fontsLoaded] = useFonts({
+    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+  });
+
+  // Esperar a fonte carregar antes de renderizar
+  if (!fontsLoaded) {
+    return <Text>Carregando fontes...</Text>;
+  }
 
   const navigation = useNavigation();
 
@@ -48,29 +59,29 @@ export default function Cadastro() {
         delay={500}
         style={styles.containerHeader}
       >
-        <Text style={styles.message}>Cadastre-se</Text>
+        <Text style={[styles.message, { fontFamily: "JetBrainsMono-Bold" }]}>Cadastre-se</Text>
       </Animatable.View>
 
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-        <Text style={styles.title}>Email</Text>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Email</Text>
 
         <TextInput
           placeholder="Digite um email..."
-          style={styles.input}
+          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
           value={userMail}
           onChangeText={setUserMail}
         />
 
-        <Text style={styles.title}>Senha</Text>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Senha</Text>
         <TextInput
           placeholder="Digite uma senha..."
-          style={styles.input}
+          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
           value={userPass}
           onChangeText={setUserPass}
         />
 
         <TouchableOpacity style={styles.button} onPress={newUser}>
-          <Text style={styles.buttonText}>Criar Conta</Text>
+          <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Criar Conta</Text>
         </TouchableOpacity>
       </Animatable.View>
     </View>
@@ -89,7 +100,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 30,
-    fontWeight: "bold",
     color: "white",
   },
   containerForm: {
@@ -122,7 +132,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: "bold",
   },
   buttonRegister: {
     backgroundColor: "#38a69d",

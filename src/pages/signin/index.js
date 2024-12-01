@@ -18,6 +18,7 @@ import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { app } from '../../services/firebaseConfig.js';
 import { Ionicons } from '@expo/vector-icons';
+import { useFonts } from 'expo-font';
 
 export default function Signin() {
 const [userMail, setUserMail] = useState('');
@@ -30,6 +31,14 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
 
   const navigation = useNavigation();
 
+  const [fontsLoaded] = useFonts({
+    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+  });
+
+  // Esperar a fonte carregar antes de renderizar
+  if (!fontsLoaded) {
+    return <Text>Carregando fontes...</Text>;
+  }
   const userlogin = () => {
     setIsLoadingLogin(true); // Ativa o indicador de atividade para login
     signInWithEmailAndPassword(auth, userMail, userPass)
@@ -80,23 +89,23 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-        <Text style={styles.message}>Bem-vindo(a)</Text>
+        <Text style={[styles.message, { fontFamily: "JetBrainsMono-Bold" }]}>Bem-vindo(a)</Text>
       </Animatable.View>
 
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-        <Text style={styles.title}>Email</Text>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Email</Text>
 
         <TextInput
           placeholder="Digite um email..."
-          style={styles.input}
+          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
           value={userMail}
           onChangeText={setUserMail}
         />
 
-        <Text style={styles.title}>Senha</Text>
-        <TextInput
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Senha</Text>
+        <TextInput 
           placeholder="Digite sua senha..."
-          style={styles.input}
+          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
           value={userPass}
           onChangeText={setUserPass}
           secureTextEntry={hidePass}
@@ -109,7 +118,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingLogin ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={styles.buttonText}>Acessar</Text>
+            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Acessar</Text>
           )}
         </TouchableOpacity>
 
@@ -117,7 +126,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingRegister ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={styles.buttonText}>Cadastrar</Text>
+            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cadastrar</Text>
           )}
         </TouchableOpacity>
 
@@ -125,7 +134,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingForgotPassword ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={styles.buttonText}>Esqueci Senha</Text>
+            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Esqueci Senha</Text>
           )}
         </TouchableOpacity>
       </Animatable.View>
@@ -155,7 +164,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 30,
-    fontWeight: 'bold',
     color: 'white',
   },
   containerForm: {
@@ -189,7 +197,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 0;

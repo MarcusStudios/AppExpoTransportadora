@@ -8,6 +8,7 @@ import {
   Button,
   useColorScheme,
 } from "react-native";
+import {useFonts } from 'expo-font';
 
 import * as Animatable from "react-native-animatable";
 import { useNavigation } from "@react-navigation/native";
@@ -16,6 +17,15 @@ import { auth } from "../../services/firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
 
 export default function Senha() {
+
+  const [fontsLoaded] = useFonts({
+    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+  });
+
+  // Esperar a fonte carregar antes de renderizar
+  if (!fontsLoaded) {
+    return <Text>Carregando fontes...</Text>;
+  }
   const [userMail, setUserMail] = useState("");
 
   const navigation = useNavigation();
@@ -47,21 +57,21 @@ export default function Senha() {
         delay={500}
         style={styles.containerHeader}
       >
-        <Text style={styles.message}>Redefinir Senha</Text>
+        <Text style={[styles.message, { fontFamily: "JetBrainsMono-Bold" }]}>Redefinir Senha</Text>
       </Animatable.View>
 
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-        <Text style={styles.title}>Email</Text>
+        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Email</Text>
 
         <TextInput
           placeholder="Digite o email..."
-          style={styles.input}
+          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
           value={userMail}
           onChangeText={setUserMail}
         />
 
         <TouchableOpacity style={styles.button} onPress={replacePass}>
-          <Text style={styles.buttonText}>Enviar</Text>
+          <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Enviar</Text>
         </TouchableOpacity>
       </Animatable.View>
     </View>
@@ -80,7 +90,6 @@ const styles = StyleSheet.create({
   },
   message: {
     fontSize: 30,
-    fontWeight: "bold",
     color: "white",
   },
   containerForm: {
@@ -113,7 +122,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: "bold",
   },
   buttonRegister: {
     backgroundColor: "#38a69d",
@@ -127,6 +135,5 @@ const styles = StyleSheet.create({
   registerText: {
     color: "white",
     fontSize: 18,
-    fontFamily: "Ubuntu_700Bold",
   },
 });
