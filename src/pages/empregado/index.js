@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, FlatList, Image, TouchableOpacity, StyleSheet, Modal, Alert } from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Modal, Alert } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { db, storage } from "../../services/firebaseConfig";
+import { db } from "../../services/firebaseConfig";
 import { collection, addDoc, updateDoc, deleteDoc, onSnapshot, doc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useFonts } from "expo-font"; // Importando useFonts para carregar a fonte
 
 export default function Empregado() {
@@ -12,7 +10,6 @@ export default function Empregado() {
   const [idade, setIdade] = useState("");
   const [veiculo, setVeiculo] = useState("Caminhão Grande");
   const [status, setStatus] = useState("disponível");
-  const [foto, setFoto] = useState(null);
   const [empregados, setEmpregados] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -35,62 +32,37 @@ export default function Empregado() {
         id: doc.id,
         ...doc.data(),
       }));
-      console.log("Empregados carregados:", empregadosData); // Adicione este log
       setEmpregados(empregadosData);
     });
     return () => unsubscribe();
   }, []);
-  
 
-  const uploadImageToFirebase = async (uri) => {
+  const handleSave = async () => {
     try {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const fileName = uri.split("/").pop();
-        const storageRef = ref(storage, `empregadosFotos/${fileName}`);
-        await uploadBytes(storageRef, blob);
-        const downloadURL = await getDownloadURL(storageRef);
-        console.log("URL da Imagem:", downloadURL); // Adicione este log
-        return downloadURL;
-    } catch (error) {
-        console.error("Erro no upload da imagem:", error);
-        throw error;
-    }
-};
-
-
-const handleSave = async () => {
-  try {
-      let fotoUrl = null;
-      if (foto) {
-          fotoUrl = await uploadImageToFirebase(foto);
-      }
-
       const novoEmpregado = {
-          nome,
-          idade,
-          veiculo,
-          status,
-          ...(fotoUrl && { foto: fotoUrl }), // Certifique-se de que o campo "foto" está sendo adicionado
+        nome,
+        idade,
+        veiculo,
+        status,
       };
 
       if (selectedId) {
-          const docRef = doc(db, "empregados", selectedId);
-          await updateDoc(docRef, novoEmpregado);
+        const docRef = doc(db, "empregados", selectedId);
+        await updateDoc(docRef, novoEmpregado);
       } else {
-          await addDoc(empregadosRef, novoEmpregado);
+        await addDoc(empregadosRef, novoEmpregado);
       }
 
       setNome("");
       setIdade("");
       setVeiculo("Caminhão Grande");
       setStatus("disponível");
-      setFoto(null);
+      setSelectedId(null);
       setModalVisible(false);
-  } catch (error) {
+    } catch (error) {
       Alert.alert("Erro", "Houve um erro ao salvar o empregado. Tente novamente.");
-  }
-};
+    }
+  };
 
   const handleDelete = async (id) => {
     const docRef = doc(db, "empregados", id);
@@ -102,22 +74,8 @@ const handleSave = async () => {
     setIdade(empregado.idade);
     setVeiculo(empregado.veiculo);
     setStatus(empregado.status);
-    setFoto(empregado.foto);
     setSelectedId(empregado.id);
     setModalVisible(true);
-  };
-
-  const handlePickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.5,
-    });
-
-    if (!result.canceled) {
-      setFoto(result.uri);
-    }
   };
 
   const getStatusColor = (status) => {
@@ -148,13 +106,9 @@ const handleSave = async () => {
         data={empregados}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          
           <View style={styles.empregadoContainer}>
-            {item.foto && (
-             <Image source={{ uri: item.foto }} style={styles.empregadoImage} />
-            )}
             <View style={styles.empregadoInfo}>
-              <Text  style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>
+              <Text style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>
                 {item.nome} - {item.idade} anos
               </Text>
               <Text style={[styles.empregadoText, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo: {item.veiculo}</Text>
@@ -189,13 +143,6 @@ const handleSave = async () => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <TouchableOpacity onPress={handlePickImage} style={styles.imagePicker}>
-              {foto ? (
-                <Image source={{ uri: foto }} style={styles.imagePreview} />
-              ) : (
-                <Text style={[styles.imagePlaceholder, { fontFamily: "JetBrainsMono-Bold" }]}>Selecionar Foto</Text>
-              )}
-            </TouchableOpacity>
             <TextInput
               placeholder="Nome"
               value={nome}
@@ -209,7 +156,7 @@ const handleSave = async () => {
               keyboardType="numeric"
               style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
             />
-            <Text  style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo:</Text>
+            <Text style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Veículo:</Text>
             <Picker
               selectedValue={veiculo}
               onValueChange={(itemValue) => setVeiculo(itemValue)}
@@ -219,7 +166,7 @@ const handleSave = async () => {
               <Picker.Item label="Caminhão Médio" value="Caminhão Médio" />
               <Picker.Item label="Caminhão Pequeno" value="Caminhão Pequeno" />
             </Picker>
-            <Text  style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Status:</Text>
+            <Text style={[styles.label, { fontFamily: "JetBrainsMono-Bold" }]}>Status:</Text>
             <Picker
               selectedValue={status}
               onValueChange={(itemValue) => setStatus(itemValue)}
@@ -230,7 +177,7 @@ const handleSave = async () => {
               <Picker.Item label="De folga" value="de folga" />
             </Picker>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text  style={[styles.saveButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>
+              <Text style={[styles.saveButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>
                 {selectedId ? "Atualizar Empregado" : "Salvar Empregado"}
               </Text>
             </TouchableOpacity>
@@ -238,7 +185,7 @@ const handleSave = async () => {
               onPress={() => setModalVisible(false)}
               style={styles.cancelButton}
             >
-              <Text  style={[styles.cancelButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cancelar</Text>
+              <Text style={[styles.cancelButtonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cancelar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -246,6 +193,7 @@ const handleSave = async () => {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -324,15 +272,6 @@ const styles = StyleSheet.create({
   imagePicker: {
     alignItems: "center",
     marginBottom: 15,
-  },
-  imagePreview: {
-    width: 150,
-    height: 150,
-    borderRadius: 10,
-  },
-  imagePlaceholder: {
-    fontSize: 16,
-    color: "#007bff",
   },
   input: {
     borderBottomWidth: 1,
