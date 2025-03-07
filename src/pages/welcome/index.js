@@ -1,12 +1,12 @@
-import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity,  } from "react-native";
-import * as Animatable from "react-native-animatable";
-import { useNavigation } from "@react-navigation/native";
-import { useFonts } from "expo-font";
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { useNavigation } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
 
 export default function Welcome() {
   const [fontsLoaded] = useFonts({
-    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+    'JetBrainsMono-Bold': require('../../asset/fonts/JetBrainsMono-Bold.ttf'),
   });
 
   // Esperar a fonte carregar antes de renderizar
@@ -19,26 +19,24 @@ export default function Welcome() {
       <View style={styles.containerLogo}>
         <Animatable.Image
           animation="flipInY"
-          source={require("../../asset/logo.png")}
-          style={{ width: "100%" }}
+          source={require('../../asset/logo.png')}
+          style={{ width: '100%' }}
           resizeMode="contain"
         />
       </View>
 
-      <Animatable.View
-        delay={600}
-        animation="fadeInUp"
-        style={styles.containerForm}
-      >
-        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}> Monitore, organize e gerencie de qualquer lugar</Text>
-           
-        <Text style={[styles.text, { fontFamily: "JetBrainsMono-Bold" }]}>Faça o login para começar</Text>
+      <Animatable.View delay={600} animation="fadeInUp" style={styles.containerForm}>
+        <Text style={[styles.title, { fontFamily: 'JetBrainsMono-Bold' }]}>
+          {' '}
+          Monitore, organize e gerencie de qualquer lugar
+        </Text>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("Signin")}
-        >
-          <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Acessar</Text>
+        <Text style={[styles.text, { fontFamily: 'JetBrainsMono-Bold' }]}>
+          Faça o login para começar
+        </Text>
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Signin')}>
+          <Text style={[styles.buttonText, { fontFamily: 'JetBrainsMono-Bold' }]}>Acessar</Text>
         </TouchableOpacity>
       </Animatable.View>
     </View>
@@ -48,21 +46,21 @@ export default function Welcome() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#38a69d",
+    backgroundColor: '#38a69d',
   },
   containerLogo: {
     flex: 2,
-    backgroundColor: "#38a69d",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#38a69d',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   containerForm: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
-    paddingStart: "5%",
-    paddingEnd: "5%",
+    paddingStart: '5%',
+    paddingEnd: '5%',
   },
   title: {
     fontSize: 24,
@@ -70,21 +68,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   text: {
-    color: "#a1a1a1",
+    color: '#a1a1a1',
   },
   button: {
-    position: "absolute",
-    backgroundColor: "#38a69d",
+    position: 'absolute',
+    backgroundColor: '#38a69d',
     borderRadius: 10,
     paddingVertical: 8,
-    width: "50%",
-    alignSelf: "center",
-    bottom: "10%",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '50%',
+    alignSelf: 'center',
+    bottom: '10%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     fontSize: 18,
-    color: "white",
+    color: 'white',
   },
 });

@@ -21,18 +21,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFonts } from 'expo-font';
 
 export default function Signin() {
-const [userMail, setUserMail] = useState('');
-const [userPass, setUserPass] = useState('');
-const [hidePass, setHidePass] = useState(true);
-const [isLoadingLogin, setIsLoadingLogin] = useState(false);
-const [isLoadingRegister, setIsLoadingRegister] = useState(false);
-const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
-
+  const [userMail, setUserMail] = useState('');
+  const [userPass, setUserPass] = useState('');
+  const [hidePass, setHidePass] = useState(true);
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
+  const [isLoadingRegister, setIsLoadingRegister] = useState(false);
+  const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
 
   const navigation = useNavigation();
 
   const [fontsLoaded] = useFonts({
-    "JetBrainsMono-Bold": require("../../asset/fonts/JetBrainsMono-Bold.ttf"),
+    'JetBrainsMono-Bold': require('../../asset/fonts/JetBrainsMono-Bold.ttf'),
   });
 
   // Esperar a fonte carregar antes de renderizar
@@ -42,20 +41,19 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
   const userlogin = () => {
     setIsLoadingLogin(true); // Ativa o indicador de atividade para login
     signInWithEmailAndPassword(auth, userMail, userPass)
-  .then((userCredential) => {
-    const user = userCredential.user; // Corrigido aqui
-    alert("Login efetuado com sucesso!");
-    console.log(user);
-    navigation.navigate("Home");
-  })
-  .catch((error) => {
-    const errorMessage = error.message;
-    alert(errorMessage);
-  })
-  .finally(() => {
-    setIsLoadingLogin(false); // Desativa o indicador de atividade após o término do login
-  });
-
+      .then((userCredential) => {
+        const user = userCredential.user; // Corrigido aqui
+        alert('Login efetuado com sucesso!');
+        console.log(user);
+        navigation.navigate('Home');
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+      })
+      .finally(() => {
+        setIsLoadingLogin(false); // Desativa o indicador de atividade após o término do login
+      });
   };
 
   const handleRegister = async () => {
@@ -63,49 +61,47 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
     // Simulação de uma chamada de rede
     try {
       await new Promise((resolve) => setTimeout(resolve, 600)); // Simula um atraso de 2 segundos
-      navigation.navigate("Cadastro");
+      navigation.navigate('Cadastro');
     } catch (error) {
-      alert("Ocorreu um erro durante o cadastro.");
+      alert('Ocorreu um erro durante o cadastro.');
     } finally {
       setIsLoadingRegister(false);
     }
   };
-  
+
   const handleForgotPassword = async () => {
     setIsLoadingForgotPassword(true);
     // Simulação de uma chamada de rede
     try {
       await new Promise((resolve) => setTimeout(resolve, 600)); // Simula um atraso de 2 segundos
-      navigation.navigate("Senha");
+      navigation.navigate('Senha');
     } catch (error) {
-      alert("Ocorreu um erro ao tentar recuperar a senha.");
+      alert('Ocorreu um erro ao tentar recuperar a senha.');
     } finally {
       setIsLoadingForgotPassword(false);
     }
   };
-  
-  
 
   return (
     <View style={styles.container}>
       <Animatable.View animation="fadeInLeft" delay={500} style={styles.containerHeader}>
-        <Text style={[styles.message, { fontFamily: "JetBrainsMono-Bold" }]}>Bem-vindo(a)</Text>
+        <Text style={[styles.message, { fontFamily: 'JetBrainsMono-Bold' }]}>Bem-vindo(a)</Text>
       </Animatable.View>
 
       <Animatable.View animation="fadeInUp" style={styles.containerForm}>
-        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Email</Text>
+        <Text style={[styles.title, { fontFamily: 'JetBrainsMono-Bold' }]}>Email</Text>
 
         <TextInput
           placeholder="Digite um email..."
-          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
+          style={[styles.input, { fontFamily: 'JetBrainsMono-Bold' }]}
           value={userMail}
           onChangeText={setUserMail}
         />
 
-        <Text style={[styles.title, { fontFamily: "JetBrainsMono-Bold" }]}>Senha</Text>
-        <TextInput 
+        <Text style={[styles.title, { fontFamily: 'JetBrainsMono-Bold' }]}>Senha</Text>
+        <TextInput
           placeholder="Digite sua senha..."
-          style={[styles.input, { fontFamily: "JetBrainsMono-Bold" }]}
+          style={[styles.input, { fontFamily: 'JetBrainsMono-Bold' }]}
           value={userPass}
           onChangeText={setUserPass}
           secureTextEntry={hidePass}
@@ -118,7 +114,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingLogin ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Acessar</Text>
+            <Text style={[styles.buttonText, { fontFamily: 'JetBrainsMono-Bold' }]}>Acessar</Text>
           )}
         </TouchableOpacity>
 
@@ -126,7 +122,7 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingRegister ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Cadastrar</Text>
+            <Text style={[styles.buttonText, { fontFamily: 'JetBrainsMono-Bold' }]}>Cadastrar</Text>
           )}
         </TouchableOpacity>
 
@@ -134,7 +130,9 @@ const [isLoadingForgotPassword, setIsLoadingForgotPassword] = useState(false);
           {isLoadingForgotPassword ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
-            <Text style={[styles.buttonText, { fontFamily: "JetBrainsMono-Bold" }]}>Esqueci Senha</Text>
+            <Text style={[styles.buttonText, { fontFamily: 'JetBrainsMono-Bold' }]}>
+              Esqueci Senha
+            </Text>
           )}
         </TouchableOpacity>
       </Animatable.View>

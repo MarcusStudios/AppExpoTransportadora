@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Button, Alert, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+  Alert,
+  TextInput,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ImagePicker from 'expo-image-picker';
 import { getAuth, updateProfile, signOut } from 'firebase/auth';
@@ -34,16 +43,18 @@ const Usuario = () => {
       updateProfile(currentUser, {
         displayName: newName,
         photoURL: newProfileImage || user.profileImage,
-      }).then(() => {
-        setUser((prevUser) => ({
-          ...prevUser,
-          name: newName,
-          profileImage: newProfileImage || prevUser.profileImage,
-        }));
-        Alert.alert('Sucesso', 'Perfil Salvo com Sucesso!');
-      }).catch((error) => {
-        Alert.alert('Error', 'Erro:', error.message);
-      });
+      })
+        .then(() => {
+          setUser((prevUser) => ({
+            ...prevUser,
+            name: newName,
+            profileImage: newProfileImage || prevUser.profileImage,
+          }));
+          Alert.alert('Sucesso', 'Perfil Salvo com Sucesso!');
+        })
+        .catch((error) => {
+          Alert.alert('Error', 'Erro:', error.message);
+        });
     }
   };
 
@@ -61,26 +72,24 @@ const Usuario = () => {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      'Logout',
-      'Tem certeza de que deseja sair?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Logout',
-          onPress: () => {
-            signOut(getAuth()).then(() => {
+    Alert.alert('Logout', 'Tem certeza de que deseja sair?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Logout',
+        onPress: () => {
+          signOut(getAuth())
+            .then(() => {
               navigation.replace('Welcome');
-            }).catch((error) => {
+            })
+            .catch((error) => {
               Alert.alert('Error', 'Error logging out:', error.message);
             });
-          },
         },
-      ],
-    );
+      },
+    ]);
   };
 
   return (
@@ -90,11 +99,7 @@ const Usuario = () => {
         <TouchableOpacity onPress={pickImage} style={styles.editImageButton}>
           <Ionicons name="camera-outline" size={20} color="#fff" />
         </TouchableOpacity>
-        <TextInput
-          style={styles.userNameInput}
-          value={newName}
-          onChangeText={setNewName}
-        />
+        <TextInput style={styles.userNameInput} value={newName} onChangeText={setNewName} />
         <Text style={styles.userEmail}>{user.email}</Text>
       </View>
 

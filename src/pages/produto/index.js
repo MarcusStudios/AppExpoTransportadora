@@ -12,14 +12,7 @@ import {
   Modal,
 } from 'react-native';
 import { db } from '../../services/firebaseConfig';
-import {
-  collection,
-  addDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  doc,
-} from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 export default function Produtos() {
   const [nomeProduto, setNomeProduto] = useState('');
@@ -115,8 +108,7 @@ export default function Produtos() {
         onPress={() => {
           resetarFormulario();
           setModalVisible(true);
-        }}
-      >
+        }}>
         <Text style={styles.addButtonText}>+ Adicionar Produto</Text>
       </TouchableOpacity>
 
@@ -133,14 +125,12 @@ export default function Produtos() {
             <View style={styles.actionButtons}>
               <TouchableOpacity
                 style={[styles.actionButton, styles.editButton]}
-                onPress={() => abrirModalParaEditar(item)}
-              >
+                onPress={() => abrirModalParaEditar(item)}>
                 <Text style={styles.actionButtonText}>Editar</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.actionButton, styles.deleteButton]}
-                onPress={() => excluirProduto(item.id)}
-              >
+                onPress={() => excluirProduto(item.id)}>
                 <Text style={styles.actionButtonText}>Excluir</Text>
               </TouchableOpacity>
             </View>
@@ -183,10 +173,7 @@ export default function Produtos() {
                 {editandoProduto ? 'Salvar Alterações' : 'Cadastrar'}
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
               <Text style={styles.cancelButtonText}>Cancelar</Text>
             </TouchableOpacity>
           </View>
@@ -200,38 +187,38 @@ export default function Produtos() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f5f9",
+    backgroundColor: '#f1f5f9',
     padding: 16,
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontWeight: 'bold',
+    color: '#1f2937',
     marginBottom: 16,
   },
   addButton: {
-    backgroundColor: "#3b82f6",
+    backgroundColor: '#3b82f6',
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
   addButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   productCard: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
@@ -239,50 +226,50 @@ const styles = StyleSheet.create({
   },
   productTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontWeight: 'bold',
+    color: '#1f2937',
     marginBottom: 4,
   },
   productText: {
     fontSize: 14,
-    color: "#4b5563",
+    color: '#4b5563',
     marginBottom: 4,
   },
   actionButtons: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 8,
   },
   actionButton: {
     flex: 1,
-    alignItems: "center",
+    alignItems: 'center',
     paddingVertical: 8,
     borderRadius: 6,
     marginHorizontal: 4,
   },
   editButton: {
-    backgroundColor: "#fbbf24",
+    backgroundColor: '#fbbf24',
   },
   deleteButton: {
-    backgroundColor: "#ef4444",
+    backgroundColor: '#ef4444',
   },
   actionButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
   },
   modalContent: {
-    width: "90%",
-    backgroundColor: "#f9fafb",
+    width: '90%',
+    backgroundColor: '#f9fafb',
     borderRadius: 12,
     padding: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 6,
@@ -290,51 +277,50 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "bold",
-    color: "#1f2937",
+    fontWeight: 'bold',
+    color: '#1f2937',
     marginBottom: 16,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#d1d5db",
+    borderColor: '#d1d5db',
     borderRadius: 8,
     padding: 12,
     marginBottom: 12,
     fontSize: 14,
-    color: "#4b5563",
+    color: '#4b5563',
   },
   switchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 12,
   },
   switchLabel: {
     fontSize: 14,
-    color: "#1f2937",
+    color: '#1f2937',
   },
   saveButton: {
-    backgroundColor: "#10b981",
+    backgroundColor: '#10b981',
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 8,
   },
   saveButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   cancelButton: {
-    backgroundColor: "#6b7280",
+    backgroundColor: '#6b7280',
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   cancelButtonText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
-
